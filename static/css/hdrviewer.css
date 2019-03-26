@@ -1,0 +1,77 @@
+body {
+    font-size: 14px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+
+h1.title {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: normal;
+    font-size: 30px;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+div.content {
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+div.help {
+    font-family: 'Open Sans', sans-serif;
+    margin-bottom: 20px;
+}
+
+div.info {
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-top:10px;
+}
+
+button {
+    padding: 8px 15px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 1.4;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+}
+
+.selector {
+    padding: 8px 15px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 1.4;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+}
+
+.selector-primary {
+    color: #AAA;
+    background-color: #333;
+}
+
+.selector-primary.active {
+    color: #FFF;
+    background-color: #1F8DD6;
+}
+
+.selector-group {
+    padding: 0px;
+    background-color: #333;
+}
+
+.selector-group>.selector {
+    position: relative;
+}
