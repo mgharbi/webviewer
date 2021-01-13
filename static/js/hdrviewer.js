@@ -7,6 +7,7 @@ function getText(id) {
 function HDRViewer(parent, config, width=1024, height=512) {
   var self = this;
 
+
   var box = document.createElement('div');
   box.className = "hdrviewer";
 
@@ -25,6 +26,9 @@ function HDRViewer(parent, config, width=1024, height=512) {
   box.appendChild(help);
 
   this.exposure_range = [-8.0, 4.0];
+
+  this.width = width;
+  this.height = height;
 
   // Build navigator
   this.tree = [];
@@ -49,6 +53,8 @@ function HDRViewer(parent, config, width=1024, height=512) {
     uniforms: {
       tDiffuse: { value: this.textures[0] },
       exposure: { value: 0.0 },
+      // twidth: { value: 10.0},
+      // theight: { value: 1.0 },
     },
     vertexShader: getText("hdr_vertex_shader"),
     fragmentShader: getText("hdr_frag_shader"),
@@ -59,8 +65,13 @@ function HDRViewer(parent, config, width=1024, height=512) {
   var plane = new THREE.PlaneBufferGeometry(width, height);
   this.quad = new THREE.Mesh(plane, this.material);
   this.quad.position.z = -1
-  this.quad.scale.x = -1;
-  this.quad.rotation.z = Math.PI;
+  this.zoom_factor = 1;
+  this.aspect_ratio = 1;
+  // this.scale_x = 1;
+  // this.scale_y = 1;
+  // this.quad.scale.x = -1;
+  // this.quad.scale.y = -1;
+  // this.quad.rotation.z = Math.PI;
   this.scene.add(this.quad);
 
   box.appendChild(this.renderer.domElement);
@@ -93,23 +104,37 @@ function HDRViewer(parent, config, width=1024, height=512) {
   this.animate();
 }
 
+HDRViewer.prototype.update_quad = function() {
+  console.log("scaling quad", this.aspect_ratio);
+  if (this.aspect_ratio < 1) {
+    this.quad.scale.x = this.aspect_ratio*this.zoom_factor; 
+    this.quad.scale.y = this.zoom_factor; 
+  } else {
+    this.quad.scale.x = this.zoom_factor; 
+    this.quad.scale.y = this.zoom_factor/this.aspect_ratio; 
+  }
+  this.quad.needsUpdate = true;
+}
+
 HDRViewer.prototype.zoom = function() {
   var transform = d3.event.transform;
-  this.quad.scale.x = -transform.k;
-  this.quad.scale.y = transform.k;
-  this.quad.scale.z = transform.k;
-  this.quad.needsUpdate = true;
+  // this.quad.scale.x = -transform.k;
+  // this.quad.scale.y = -transform.k;
+  // this.quad.scale.z = transform.k;
+  this.zoom_factor = transform.k;
+  this.update_quad();
 }
 
 HDRViewer.prototype.reset_zoom = function() {
   var transform = d3.event.transform;
   this.quad.position.x = 0;
   this.quad.position.y = 0;
-  this.quad.scale.x = -1;
-  this.quad.scale.y = 1;
-  this.quad.scale.z = 1;
-  this.quad.needsUpdate = true;
+  // this.quad.scale.x = -1;
+  this.zoom_factor = 1;
+  // this.quad.scale.y = -1;
+  // this.quad.scale.z = 1;
   this.change_exposure(0);
+  this.update_quad();
 }
 
 HDRViewer.prototype.change_exposure = function(e) {
@@ -210,6 +235,13 @@ HDRViewer.prototype.showContent = function(level, idx) {
     l += 1;
   }
 
+  if(node.texture.image) {
+    h = node.texture.image.height;
+    w = node.texture.image.width;
+    ratio = self.width / self.height;
+    this.aspect_ratio = w/h / ratio ;
+    this.update_quad();
+  }
   this.material.uniforms.tDiffuse.value = node.texture;
   this.material.uniforms.tDiffuse.needsUpdate = true;
 }
@@ -242,6 +274,7 @@ HDRViewer.prototype.buildTreeNode = function(config, level, nodeList, parent) {
     contentNode.selector = selector;
     contentNode.texture = null;
 
+
     var content;
     if (typeof(config[i].elements) !== 'undefined') {
       // Recurse
@@ -252,10 +285,27 @@ HDRViewer.prototype.buildTreeNode = function(config, level, nodeList, parent) {
     } else {
       // Create image
       content = document.createElement('div'); 
-      var texture = new THREE.RGBELoader().load(
-        config[i].image, function(texture, textureData) {
+      // var texture = new THREE.RGBELoader().load(
+      var texture = new THREE.TextureLoader().load(
+        config[i].image, function(texture) {
         texture.minFilter = THREE.NearestFilter;
         texture.magFilter = THREE.NearestFilter;
+        // twidth = texture.image.width;
+        // theight = texture.image.height;
+        // ratio = twidth / theight;
+        // geom_ratio = self.width/self.height;
+        // console.log("height", theight, self.height);
+        // console.log("width", twidth, self.width);
+
+        // texture.scale.x = 2;
+        // texture.repeat.set(1.0, 0.1);
+        // console.log("ratio", ratio, "gratio", geom_ratio);
+        // scale = 1.0/ratio;
+        // if(twidth > theight) { //ratio > 1
+        //   texture.repeat.set(1.0, 1/ratio);
+        // } else {
+        //   texture.repeat.set(ratio);
+        // }
       });
       contentNode.texture = texture;
       var key = '';

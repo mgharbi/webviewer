@@ -5,6 +5,7 @@ import json
 import shutil
 import subprocess
 
+
 def make_data(path, out):
   """Assumes the structure folder is:
     .method1
@@ -21,18 +22,31 @@ def make_data(path, out):
       os.makedirs(out_r)
 
     for f in sorted(files):
-      if not os.path.splitext(f)[-1] == ".exr":
-        continue
+      do_exr = False
+      if do_exr:
+        if not os.path.splitext(f)[-1] == ".exr":
+          continue
 
-      src = os.path.join(r, f)
-      dst = os.path.join(out_r, f.replace(".exr", ".hdr"))
-      dst_link = dst.replace(out, "data")
-      print("  ", src, "->", dst)
-      cmd = ["pfsin", src]
-      pipe_in = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-      cmd = ["pfsout", dst]
-      pipe_out = subprocess.Popen(cmd, stdin=pipe_in.stdout, stdout=subprocess.PIPE)
-      pipe_out.communicate()
+        src = os.path.join(r, f)
+        dst = os.path.join(out_r, f.replace(".exr", ".hdr"))
+        dst_link = dst.replace(out, "data")
+        print("  ", src, "->", dst)
+        cmd = ["pfsin", src]
+        pipe_in = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        cmd = ["pfsout", dst]
+        pipe_out = subprocess.Popen(cmd, stdin=pipe_in.stdout, stdout=subprocess.PIPE)
+        pipe_out.communicate()
+      else:
+        if not os.path.splitext(f)[-1] == ".jpg":
+          continue
+        src = os.path.join(r, f)
+        dst = os.path.join(out_r, f)
+        dst_link = dst.replace(out, "data")
+        print("  ", src, "->", dst)
+        if args.copy:
+          shutil.copy(os.path.abspath(src), dst)
+        else:
+          os.symlink(os.path.abspath(src), dst)
 
       method_name = os.path.basename(r)
       imname = os.path.splitext(f)[0]
@@ -47,6 +61,7 @@ def make_data(path, out):
     for m in sorted(methds):
       elt["elements"].append({"image": m[1], "title": m[0]})
     jsonfile["images"].append(elt)
+
   return jsonfile
 
 
@@ -68,6 +83,7 @@ def main(args):
   with open(os.path.join(root, "template.html")) as fid:
     template = fid.read()
 
+  parser.set_defaults(copy=False)
   with open(os.path.join(root, "static", "shaders", "hdrviewer.frag")) as fid:
     frag = fid.read()
 
@@ -88,7 +104,9 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("data_root")
   parser.add_argument("output")
+  parser.add_argument("--copy", dest="copy", action='store_true')
   parser.add_argument("--width", type=int, default=1024)
   parser.add_argument("--height", type=int, default=512)
+  parser.set_defaults(copy=False)
   args = parser.parse_args()
   main(args)
