@@ -1,0 +1,107 @@
+html, body {
+	height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  outline: 0;
+}
+
+
+#imageViewer {
+	width: 800px;
+	height: 600px;
+	position: relative;
+	border: 1px solid black;
+}
+
+.labels {
+	position: absolute;
+
+	height: 44px;
+	width: 100%;
+
+	/* align-content: center; */
+	/* text-align: center; */
+
+	color: white;
+
+	left: 0%;
+	top: 2%;
+
+	z-index: 1;
+}
+
+.label {
+	/* margin: auto; */
+	display: inline-block;
+	width: 45%;
+	/* padding: auto; */
+	margin: 2%; 
+}
+
+.label.left {
+	text-align: right;
+}
+
+.label.right {
+	text-align: left;
+}
+
+
+/* .right-label { */
+/* 	position: absolute; */
+/*  */
+/* 	height: 44px; */
+/* 	width: 44px; */
+/*  */
+/* 	color: white; */
+/*  */
+/* 	left: 55%; */
+/* 	top: 5%; */
+/*  */
+/* 	z-index: 1; */
+/* } */
+
+
+.slider-divider {
+	position: absolute;
+
+	height: 100%;
+	width: 1px;
+
+	left: 50%;
+	top: 0%;
+	border: 1px solid red;
+
+	z-index: 1;
+}
+
+.slider-handle {
+
+	position: absolute;
+
+	height: 44px;
+	width: 44px;
+
+	/* center the element */
+	left: 50%;
+	top: 50%;
+
+	margin-left: -22px;
+	margin-top: -22px;
+
+	border-radius: 50%;
+
+	background: #dc717d url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path fill="%23FFF" d="M13 21l-5-5 5-5m6 0l5 5-5 5"/></svg>') no-repeat center center;
+	cursor: move;
+
+	box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.2), 0 0 10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+	z-index: 2;
+
+}
+
+.slider-handle.draggable {
+	background-color: #445b7c;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<title>Web comparison</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}">
+		<link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+	</head>
+
+	<body>
+		<div class="container" id="content">
+				<h3 class="text-center">Image Comparator</h3>
+				<p class="row justify-content-md-center">
+				Use the mouse to zoom and pan, and the dropdown lists to choose an image or method.
+				</p>
+				<p>
+				Link to this page:
+				<a id="viewerLink" href="" data-root="{{url_for('home',_external=True)}}"> 
+					not ok
+				</a>
+				</p>
+				<div class="row justify-content-md-center">
+					<form id="imageSelectorForm" method="POST">
+						<div class="row">
+							<div class="column">
+								<div class="form-group">
+									<label for="image">image: </label>
+									<select class="form-control" name="image">
+										{% for image in images %}
+										{% if image == selected_image %}
+										<option value="{{image}}" SELECTED>{{image}}</option>"
+										{% else %}
+										<option value="{{image}}">{{image}}</option>"
+										{% endif %}
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="column">
+								<div class="form-group">
+								</div>
+							</div>
+							<div class="column">
+								<div class="form-group">
+									<label for="left method">left: </label>
+									<select class="form-control" name="left_method">
+										{% for method in methods %}
+										{% if method == left_method %}
+										<option value="{{method}}" SELECTED>{{method}}</option>"
+										{% else %}
+										<option value="{{method}}">{{method}}</option>"
+										{% endif %}
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="column">
+								<div class="form-group">
+									<label for="right method">right: </label>
+									<select class="form-control" name="right_method">
+										{% for method in methods %}
+										{% if method == right_method %}
+										<option value="{{method}}" SELECTED>{{method}}</option>"
+										{% else %}
+										<option value="{{method}}">{{method}}</option>"
+										{% endif %}
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="row justify-content-md-center">
+					<div id="imageViewer">
+						<div class="slider-divider"></div>
+						<span class="slider-handle"></span>
+						<div class="labels">
+							<span class="label left">{{left_method}}</span>
+							<span class="label right">{{right_method}}</span>
+						</div>
+					</div>
+				</div>
+		</div>
+		<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+		<script src="{{url_for('static', filename='js/jquery.serialize-object.min.js')}}"></script>
+		<script src="{{url_for('static', filename='js/openseadragon/openseadragon.min.js')}}"></script>
+		<script src="{{url_for('static', filename='js/slider.js')}}"></script>
+		<script type="text/javascript">
+			setImages("{{left_method}}", "{{right_method}}", "{{selected_image}}");
+		</script>
+	</body>
+	<footer class="bg-light text-center text-lg-start">
+		contact mgharbi@adobe.com for issues
+</footer>
+
+</html>
