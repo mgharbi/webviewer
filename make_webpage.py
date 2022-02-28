@@ -19,8 +19,6 @@ import subprocess
 
 
 def make_data(path, out):
-    """
-    """
     images = {}
     for r, dirs, files in os.walk(path):
         out_r = r.replace(path, out)
@@ -44,16 +42,13 @@ def make_data(path, out):
                     cmd, stdin=pipe_in.stdout, stdout=subprocess.PIPE)
                 pipe_out.communicate()
             else:
-                if not os.path.splitext(f)[-1] == ".jpg":
+                if not os.path.splitext(f)[-1] in [".jpg", ".png"]:
                     continue
                 src = os.path.join(r, f)
                 dst = os.path.join(out_r, f)
                 dst_link = dst.replace(out, "data")
                 print("  ", src, "->", dst)
-                # if args.copy:
                 shutil.copy(os.path.abspath(src), dst)
-                # else:
-                #     os.symlink(os.path.abspath(src), dst)
 
             method_name = os.path.basename(r)
             imname = os.path.splitext(f)[0]
@@ -110,10 +105,8 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("data_root")
-    parser.add_argument("output")
-    # parser.add_argument("--copy", dest="copy", action='store_true')
+    parser.add_argument("--output", default="output")
     parser.add_argument("--width", type=int, default=512)
     parser.add_argument("--height", type=int, default=512)
-    # parser.set_defaults(copy=False)
     args = parser.parse_args()
     main(args)
